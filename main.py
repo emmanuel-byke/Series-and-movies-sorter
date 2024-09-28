@@ -1,5 +1,6 @@
 import os
 import shutil
+import traceback
 
 from name_manager import Name
 
@@ -8,7 +9,7 @@ def rename_files(root_dir, suffix_to_remove:str="watch"):
         for filename in filenames:
             if filename.lower().startswith(suffix_to_remove):
                 base_name, ext = os.path.splitext(filename)
-                new_base_name = base_name[len(suffix_to_remove):]
+                new_base_name = base_name[len(suffix_to_remove):].strip()
                 new_filename = new_base_name + ext
                 
                 old_file_path = os.path.join(dirpath, filename)
@@ -27,17 +28,21 @@ def move_files(root_dir):
             target_path = os.path.join(root_dir, filename)
             name = Name(target_path, file_path)
             if name.is_series() or name.is_movie():
-                os.makedirs(name.get_path(), exist_ok=True)
-                target_path = os.path.join(name.get_path(), filename)
-
+                path = name.get_path()
+                print("Path:", path)
+                os.makedirs(path, exist_ok=True)
+                target_path = os.path.join(path, filename)
+                
+                print(file_path, target_path)
                 try:
                     shutil.move(file_path, target_path)
                     print(f"Moved: {file_path} -> {target_path}\n")
                 except Exception as e:
-                    print(f"Error moving {file_path} to movies: {e}")
+                    # print(f"Error moving {file_path} to movies: {e}")
+                    traceback.print_exc()
 
 rename_files(".")
-# move_files(".")
+move_files(".")
 
 
 # name1 = Name("C:/Emmanuel/The leftover season 125 episode 7.mp4")

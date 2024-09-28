@@ -21,7 +21,9 @@ class Name:
             number = number if number != -1 else self.get_number("s")
             path += f"\\Series\\{self.get_series_name()}\\Season {self.get_addition_zero(number)}"
         elif self.is_movie():
-            path += f"\\Movies"
+            path = os.path.join(path, "Movies")
+            if self.get_movie_num_index() > 0:
+                path = os.path.join(path, self.get_movie_name())
         return path
     
     def get_filename(self):
@@ -70,4 +72,25 @@ class Name:
     def is_movie(self) -> bool:
         file_size_mb = os.path.getsize(self.real_path) / (1024 * 1024)
         return not self.is_series() and file_size_mb > 350
+
+    def get_movie_num_index(self) -> int:
+        i: int = 0
+        text, _ = os.path.splitext(self.original_name)
+        while i < len(text):
+            if text[i].isdigit():
+                return i
+            elif text[i] == "(" or text[i] == "[":
+                return -1
+            i+=1
+        return -1
+    
+    def get_movie_name(self):
+        name:str = ""
+        if self.get_movie_num_index() > 0:
+            name = self.original_name[:self.get_movie_num_index()]
+        else:
+            name, _ = os.path.splitext(self.original_name)
+        return name.strip()
+    
+
     
