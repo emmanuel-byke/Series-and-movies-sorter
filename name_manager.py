@@ -13,12 +13,15 @@ class Name:
         return ((self.get_s_number_index(self.no_space)>0 or self.get_s_number_index(self.no_space, "season")>0) and 
                 (self.get_s_number_index(self.no_space, "e")>0 or self.get_s_number_index(self.no_space, "episode")>0))
     
+    def get_addition_zero(self, num:int) -> str:
+        return str(num) if num > 9 else f"0{num}"
+    
     def get_path(self) -> str:
         path:str = os.path.dirname(self.path)
         if self.is_series():
             number = self.get_number()
             number = number if number != -1 else self.get_number("s")
-            path += f"\\Series\\{self.get_series_name()}\\Season {number}"
+            path += f"\\Series\\{self.get_series_name()}\\Season {self.get_addition_zero(number)}"
         elif self.is_movie():
             pass
         return path
