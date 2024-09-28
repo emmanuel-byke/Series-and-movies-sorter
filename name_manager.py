@@ -6,10 +6,8 @@ class Name:
         self.path = path
         self.original_name:str = os.path.basename(path)
         self.no_space:str = self.original_name.replace(" ", "").lower()
-        print(f"{self.original_name} \n[SERIES]: {self.get_path()}\n\n")
 
     def is_series(self) -> bool:
-        # print(f'{self.get_s_number_index(self.no_space)}>0 or {self.get_s_number_index(self.no_space, "season")}>0) and ({self.get_s_number_index(self.no_space, "e")}>0 or {self.get_s_number_index(self.no_space, "episode")}>0)')
         return ((self.get_s_number_index(self.no_space)>0 or self.get_s_number_index(self.no_space, "season")>0) and 
                 (self.get_s_number_index(self.no_space, "e")>0 or self.get_s_number_index(self.no_space, "episode")>0))
     
@@ -23,7 +21,7 @@ class Name:
             number = number if number != -1 else self.get_number("s")
             path += f"\\Series\\{self.get_series_name()}\\Season {self.get_addition_zero(number)}"
         elif self.is_movie():
-            pass
+            path += f"\\Movies"
         return path
     
     def get_filename(self):

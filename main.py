@@ -3,19 +3,20 @@ import shutil
 
 from name_manager import Name
 
-def rename_files(root_dir):
+def rename_files(root_dir, suffix_to_remove:str="watch"):
     for dirpath, dirnames, filenames in os.walk(root_dir):
         for filename in filenames:
-            if filename.startswith("watch"):
+            if filename.lower().startswith(suffix_to_remove):
                 base_name, ext = os.path.splitext(filename)
-                new_base_name = base_name[5:]
+                new_base_name = base_name[len(suffix_to_remove):]
                 new_filename = new_base_name + ext
+                
                 old_file_path = os.path.join(dirpath, filename)
                 new_file_path = os.path.join(dirpath, new_filename)
                 
                 try:
                     os.rename(old_file_path, new_file_path)
-                    print(f"Renamed: {old_file_path} -> {new_file_path}")
+                    print(f"Renamed: {new_filename}")
                 except Exception as e:
                     print(f"Error renaming {old_file_path}: {e}")
 
@@ -36,7 +37,7 @@ def move_files(root_dir):
                     print(f"Error moving {file_path} to movies: {e}")
 
 rename_files(".")
-move_files(".")
+# move_files(".")
 
 
 # name1 = Name("C:/Emmanuel/The leftover season 125 episode 7.mp4")
