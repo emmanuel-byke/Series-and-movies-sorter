@@ -4,6 +4,18 @@ import traceback
 
 from name_manager import Name
 
+def is_media(extension:str)->bool:
+    return extension in [
+        ".mp4", ".mkv", ".avi", ".mov", ".flv", ".wmv", ".webm", 
+        ".m4v", ".3gp", ".mpeg", ".mpg", ".vob", ".ogv", ".mxf", 
+        ".mts", ".m2ts", ".f4v", ".divx", ".ts", ".rm", ".rmvb", 
+        ".dv", ".asf", ".amv", ".svi", ".m2v", ".3g2", ".dat", 
+        ".mpe", ".mpv", ".ivf", ".qt", ".yuv", ".nsv", ".mjpg", 
+        ".mjpeg", ".mod", ".tod", ".trp", ".ogm", ".mp2", ".xvid", 
+        ".hevc", ".h264", ".264", ".bin", ".bik", ".drc", ".dif", 
+        ".evo", ".fli", ".mk3d"
+    ]
+
 def rename_files(root_dir, suffix_to_remove:str="watch"):
     for dirpath, dirnames, filenames in os.walk(root_dir):
         for filename in filenames:
@@ -12,14 +24,15 @@ def rename_files(root_dir, suffix_to_remove:str="watch"):
                 new_base_name = base_name[len(suffix_to_remove):].strip()
                 new_filename = new_base_name + ext
                 
-                old_file_path = os.path.join(dirpath, filename)
-                new_file_path = os.path.join(dirpath, new_filename)
-                
-                try:
-                    os.rename(old_file_path, new_file_path)
-                    print(f"Renamed: {new_filename}")
-                except Exception as e:
-                    print(f"Error renaming {old_file_path}: {e}")
+                if is_media(ext):
+                    old_file_path = os.path.join(dirpath, filename)
+                    new_file_path = os.path.join(dirpath, new_filename)
+                    
+                    try:
+                        os.rename(old_file_path, new_file_path)
+                        print(f"Renamed: {new_filename}")
+                    except Exception as e:
+                        print(f"Error renaming {old_file_path}: {e}")
 
 def move_files(root_dir):
     for dirpath, dirnames, filenames in os.walk(root_dir):
@@ -27,13 +40,13 @@ def move_files(root_dir):
             file_path = os.path.join(dirpath, filename)
             target_path = os.path.join(root_dir, filename)
             name = Name(target_path, file_path)
-            if name.is_series() or name.is_movie():
+
+            _, ext = os.path.splitext(filename)
+            if is_media(ext) and (name.is_series() or name.is_movie()):
                 path = name.get_path()
-                print("Path:", path)
                 os.makedirs(path, exist_ok=True)
                 target_path = os.path.join(path, filename)
                 
-                print(file_path, target_path)
                 try:
                     shutil.move(file_path, target_path)
                     print(f"Moved: {file_path} -> {target_path}\n")
